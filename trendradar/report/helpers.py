@@ -6,7 +6,72 @@
 """
 
 import re
-from typing import List
+from typing import List, Optional
+
+
+def calc_duration(first_time: str, last_time: str) -> str:
+    """计算在榜时长，返回人性化显示
+
+    Args:
+        first_time: 首次上榜时间 (HH:MM 或 HH-MM 格式)
+        last_time: 最后在榜时间
+
+    Returns:
+        时长描述如 "2h30m"、"45m"、"新上榜"，空字符串表示数据不足
+    """
+    if not first_time or not last_time:
+        return ""
+    try:
+        ft = first_time.replace("-", ":")
+        lt = last_time.replace("-", ":")
+        fh, fm = map(int, ft.split(":"))
+        lh, lm = map(int, lt.split(":"))
+        duration_minutes = (lh * 60 + lm) - (fh * 60 + fm)
+        if duration_minutes <= 0:
+            return "新上榜"
+        hours = duration_minutes // 60
+        mins = duration_minutes % 60
+        if hours > 0 and mins > 0:
+            return f"⏱{hours}h{mins}m"
+        elif hours > 0:
+            return f"⏱{hours}h"
+        else:
+            return f"⏱{mins}m"
+    except (ValueError, TypeError):
+        return ""
+
+
+def calc_trend_label(ranks: List[int], rank_timeline: Optional[List[dict]] = None) -> str:
+    """计算趋势标签
+
+    Args:
+        ranks: 排名历史列表
+        rank_timeline: 排名时间线（可选，用于更精确判断）
+
+    Returns:
+        趋势标签如 "急升🔥"、"上升🔺"、"平稳➖"、"下降🔻"
+    """
+    if not ranks or len(ranks) < 2:
+        return ""
+    # 排除脱榜(0)后取有效排名
+    valid = [r for r in ranks if r > 0]
+    if len(valid) < 2:
+        return ""
+    # 最近两次有效排名
+    prev, curr = valid[-2], valid[-1]
+    diff = curr - prev  # 正数=排名数值变大=下降，负数=上升
+    magnitude = abs(diff)
+
+    if diff < 0:
+        if magnitude >= 5:
+            return "急升🔥"
+        return "上升🔺"
+    elif diff > 0:
+        if magnitude >= 5:
+            return "骤降📉"
+        return "下降🔻"
+    else:
+        return "平稳➖"
 
 
 def clean_title(title: str) -> str:

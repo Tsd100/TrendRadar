@@ -2061,11 +2061,19 @@ def render_html_content(
                 query = query.toLowerCase();
                 document.querySelectorAll('.news-item').forEach(function(item) {
                     var title = (item.querySelector('.news-title') || {}).textContent || '';
-                    item.style.display = (!query || title.toLowerCase().indexOf(query) !== -1) ? '' : 'none';
+                    var source = (item.querySelector('.source-tag') || {}).textContent || '';
+                    item.style.display = (!query || title.toLowerCase().indexOf(query) !== -1 || source.indexOf(query) !== -1) ? '' : 'none';
                 });
                 document.querySelectorAll('.rss-item').forEach(function(item) {
                     var title = (item.querySelector('.rss-title') || {}).textContent || '';
                     item.style.display = (!query || title.toLowerCase().indexOf(query) !== -1) ? '' : 'none';
+                });
+                // 折叠空分组
+                document.querySelectorAll('.word-group').forEach(function(group) {
+                    var visible = group.querySelectorAll('.news-item[style*="display: none"]').length;
+                    var total = group.querySelectorAll('.news-item').length;
+                    if (query && visible === total) group.style.display = 'none';
+                    else group.style.display = '';
                 });
             }
 
@@ -2575,7 +2583,7 @@ def render_html_content(
 
                     var line = idx + '. ';
                     if (url) {
-                        line += '[' + titleText.replace(/[[\]]/g, '') + '](' + url + ')';
+                        line += '[' + titleText.replace(/[[\\]]/g, '') + '](' + url + ')';
                     } else {
                         line += titleText;
                     }

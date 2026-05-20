@@ -7,7 +7,7 @@
 
 from typing import Dict
 
-from trendradar.report.helpers import clean_title, html_escape, format_rank_display
+from trendradar.report.helpers import clean_title, html_escape, format_rank_display, calc_duration, calc_trend_label
 
 
 def format_title_for_platform(
@@ -77,6 +77,22 @@ def format_title_for_platform(
             result += f" <font color='grey'>- {title_data['time_display']}</font>"
         if title_data["count"] > 1:
             result += f" <font color='green'>({title_data['count']}次)</font>"
+
+        # 在榜时长
+        duration = calc_duration(
+            title_data.get("first_time", ""),
+            title_data.get("last_time", ""),
+        )
+        if duration and duration != "新上榜":
+            result += f" <font color='orange'>{duration}</font>"
+
+        # 趋势标签
+        trend = calc_trend_label(
+            title_data.get("ranks", []),
+            title_data.get("rank_timeline"),
+        )
+        if trend:
+            result += f" {trend}"
 
         return result
 

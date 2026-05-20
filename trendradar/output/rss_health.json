@@ -1,0 +1,16 @@
+{
+  "hacker-news": {
+    "name": "Hacker News",
+    "consecutive_failures": 0,
+    "total_failures": 0,
+    "last_error": "",
+    "last_success": "2026-05-20 12:27"
+  },
+  "yahoo-finance": {
+    "name": "雅虎财经",
+    "consecutive_failures": 1,
+    "total_failures": 1,
+    "last_error": "HTTP ?",
+    "last_success": ""
+  }
+}
