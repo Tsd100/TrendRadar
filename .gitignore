@@ -1,0 +1,25 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment files with secrets
+.env
+*.env
+!docker/.env.example
+
+# Generated output
+output/html/
+output/news/
+output/rss/
+output/index.html
+output/rss_health.json
+
+# IDE
+.venv/
+.idea/
+.vscode/
+
+# NAS deployment - large binary deps & secrets (transferred separately)
+nas-deploy/offline-deps/
+nas-deploy/.env

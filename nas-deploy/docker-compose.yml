@@ -1,0 +1,28 @@
+services:
+  trendradar:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: trendradar
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - ./config:/app/config:ro
+      - ./output:/app/output
+
+    env_file:
+      - .env
+
+    environment:
+      - TZ=Asia/Shanghai
+      - WEBSERVER_PORT=8080
+      - FEISHU_WEBHOOK_URL=${FEISHU_WEBHOOK_URL:-}
+      - AI_ANALYSIS_ENABLED=${AI_ANALYSIS_ENABLED:-true}
+      - AI_API_KEY=${AI_API_KEY:-}
+      - AI_MODEL=${AI_MODEL:-deepseek/deepseek-chat}
+      - CRON_SCHEDULE=${CRON_SCHEDULE:-7 * * * *}
+      - RUN_MODE=cron
+      - IMMEDIATE_RUN=true
